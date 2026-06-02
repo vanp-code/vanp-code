@@ -6,25 +6,30 @@
 ## 구성
 
 - **프론트엔드**: React + Vite (`src/`)
-- **백엔드**: Vercel 서버리스 함수 (`api/polish.js`) — API 키를 서버에서만 사용해 노출을 방지
+- **백엔드**: Vercel 서버리스 함수 (`api/polish.js`) — Google Gemini API를
+  서버에서만 호출해 API 키가 외부에 노출되지 않도록 합니다.
 - **저장**: 용어집은 브라우저(localStorage)에 저장
 
 ---
 
-## 1. 로컬에서 실행하기
+## 1. Google Gemini API 키 발급 (무료 등급 사용 가능)
+
+1. https://aistudio.google.com 에 구글 계정으로 로그인합니다.
+2. "Get API key"(API 키 가져오기)에서 키를 발급합니다.
+3. 발급된 키를 복사해 둡니다. (이 키는 절대 공개된 곳에 올리지 마세요.)
+
+> 무료 등급은 분당/일당 요청 수 등에 제한이 있고, 데이터 사용 정책이
+> 유료와 다를 수 있습니다. 최신 조건은 https://ai.google.dev 에서 확인하세요.
+
+---
+
+## 2. 로컬에서 실행하기
 
 필요한 것: Node.js 18 이상
 
 ```bash
 npm install
-```
-
-`.env.example`을 복사해 `.env` 파일을 만들고 본인 API 키를 넣습니다.
-(API 키는 https://console.anthropic.com 에서 발급)
-
-```bash
-cp .env.example .env
-# .env 파일을 열어 ANTHROPIC_API_KEY 값을 채웁니다
+cp .env.example .env   # .env 파일을 열어 GEMINI_API_KEY 값을 채웁니다
 ```
 
 백엔드 함수까지 함께 로컬에서 돌리려면 Vercel CLI를 사용합니다:
@@ -35,47 +40,47 @@ vercel dev
 ```
 
 > `npm run dev`(Vite만 실행)로는 `/api/polish` 백엔드가 뜨지 않습니다.
-> 백엔드까지 테스트하려면 `vercel dev`를 쓰세요.
 
 ---
 
-## 2. GitHub에 올리기
+## 3. GitHub에 올리기 / 업데이트하기
 
-1. https://github.com 에서 새 저장소(repository)를 만듭니다.
-2. 이 폴더에서 아래를 실행합니다(또는 GitHub 웹의 "Upload files"로 업로드):
+이미 저장소가 있다면, 바뀐 파일만 다시 올리면 됩니다.
+
+- **웹에서**: 저장소에서 바뀐 파일(`api/polish.js`, `.env.example`, `README.md`)을
+  열고 연필 아이콘으로 수정하거나, "Add file → Upload files"로 덮어쓴 뒤 커밋합니다.
+- **명령줄에서**:
 
 ```bash
-git init
 git add .
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/<본인계정>/<저장소이름>.git
-git push -u origin main
+git commit -m "switch backend to Gemini"
+git push
 ```
 
-> `.gitignore`가 `node_modules`와 `.env`를 제외하므로 API 키는 깃헙에 올라가지 않습니다.
+> `.gitignore`가 `.env`를 제외하므로 API 키는 깃헙에 올라가지 않습니다.
 
 ---
 
-## 3. Vercel로 배포하기 (실제 주소 만들기)
+## 4. Vercel로 배포하기
 
 1. https://vercel.com 에 GitHub 계정으로 로그인합니다.
-2. "Add New → Project"에서 위에서 올린 저장소를 가져옵니다(Import).
+2. "Add New → Project"에서 저장소를 가져옵니다(Import).
 3. **Environment Variables**에 키를 추가합니다:
-   - `ANTHROPIC_API_KEY` = 본인 API 키
-   - (선택) `ANTHROPIC_MODEL` = 사용할 모델명
+   - `GEMINI_API_KEY` = 본인 Gemini API 키
+   - (선택) `GEMINI_MODEL` = 사용할 모델명
 4. "Deploy"를 누르면 `https://<프로젝트>.vercel.app` 주소가 생성됩니다.
 
-이 주소를 팀원들에게 공유하면 누구나 브라우저에서 바로 쓸 수 있습니다.
+> 이미 Vercel에 연결돼 있다면, 깃헙에 푸시하면 자동으로 다시 배포됩니다.
+> 단, 환경 변수 이름이 `ANTHROPIC_API_KEY`에서 `GEMINI_API_KEY`로 바뀌었으니
+> Vercel 프로젝트 Settings → Environment Variables에서 새 키를 추가하고
+> 다시 배포(Redeploy)하세요.
 
 ---
 
 ## 모델명 변경
 
-사용 가능한 최신 모델명은 공식 문서에서 확인하세요:
-https://docs.claude.com/en/docs/about-claude/models
-
-`ANTHROPIC_MODEL` 환경변수로 바꿀 수 있습니다.
+사용 가능한 모델명은 https://ai.google.dev/gemini-api/docs/models 에서 확인하고,
+`GEMINI_MODEL` 환경변수로 바꿀 수 있습니다.
 
 ---
 
