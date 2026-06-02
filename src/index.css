@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; background: #f1f1ef; }
+textarea, input, button { font-family: inherit; }
+textarea:focus, input:focus { outline: none; border-color: #1a1a1a; }
+textarea::placeholder, input::placeholder { color: #a9a9a4; }
